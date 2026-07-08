@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" data-theme="original">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root{
+  :root, [data-theme="original"]{
     --bg: #151220;
     --surface: #1E1A2B;
     --surface-2: #241f35;
@@ -26,17 +26,34 @@
     --deep: #372F4D;
     --danger: #c96a6a;
   }
+  [data-theme="amoled"]{
+    --bg: #000000;
+    --surface: #100e16;
+    --surface-2: #19161f;
+    --border: #262230;
+    --text: #F2EDF7;
+    --text-muted: #948da8;
+    --rose: #E8759E;
+    --rose-dim: #6d3f4e;
+    --lavender: #9A8DD1;
+    --sage: #86B7AC;
+    --deep: #211c2e;
+    --danger: #c96a6a;
+  }
   *{box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
   html,body{margin:0;padding:0;background:var(--bg);color:var(--text);
     font-family:'Inter',system-ui,sans-serif; overscroll-behavior:none;
     -webkit-font-smoothing:antialiased;}
-  body{min-height:100vh; padding-bottom:40px;}
+  body{min-height:100vh; padding-bottom:40px; transition:background .2s ease;}
   h1,h2,h3,.display{font-family:'Fraunces',serif;}
   .container{max-width:480px;margin:0 auto;padding:24px 20px 0;}
 
   /* header */
+  .header-row{display:flex;align-items:flex-start;justify-content:space-between;}
   .eyebrow{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin:0 0 4px;font-weight:500;}
   .app-title{font-size:22px;font-weight:600;margin:0 0 20px;}
+  .icon-btn{background:var(--surface);border:1px solid var(--border);color:var(--text);width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;flex-shrink:0;}
+  .icon-btn:active{background:var(--surface-2);}
 
   /* ring */
   .ring-wrap{position:relative;width:240px;height:240px;margin:8px auto 18px;}
@@ -69,18 +86,27 @@
   .cal-day.flow-medium{background:rgba(214,107,146,.65);}
   .cal-day.flow-heavy{background:var(--rose);color:#1a0e14;font-weight:600;}
   .cal-day.predicted{box-shadow:inset 0 0 0 1.5px var(--rose-dim); color:var(--rose);}
-  .cal-day.fertile::after{content:'';position:absolute;bottom:3px;width:4px;height:4px;border-radius:50%;background:var(--sage);}
+  .cal-day.fertile::before{content:'';position:absolute;bottom:3px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:var(--sage);}
+  .cal-pain-badge{position:absolute;top:1px;right:2px;font-size:8px;line-height:1;color:var(--rose);font-weight:700;}
+  .cal-day.flow-heavy .cal-pain-badge{color:#1a0e14;}
+  .cal-sex-dot{position:absolute;bottom:2px;right:3px;width:4px;height:4px;border-radius:50%;background:var(--lavender);}
 
   /* log section */
   .log-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:16px 18px;margin-bottom:16px;}
-  .log-title{font-size:14px;color:var(--text-muted);margin-bottom:10px;}
-  .log-date{font-size:15px;font-weight:600;margin-bottom:12px;}
+  .log-date{font-size:15px;font-weight:600;margin-bottom:14px;}
+  .log-row{margin-bottom:14px;}
+  .log-row:last-child{margin-bottom:0;}
+  .log-row-title{font-size:13px;color:var(--text-muted);margin-bottom:8px;}
   .flow-buttons{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
-  .flow-btn{padding:10px 4px;border-radius:12px;border:1px solid var(--border);background:var(--surface-2);color:var(--text);font-size:13px;font-family:'Inter';cursor:pointer;text-align:center;}
+  .pain-buttons{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;}
+  .flow-btn, .pain-btn{padding:10px 4px;border-radius:12px;border:1px solid var(--border);background:var(--surface-2);color:var(--text);font-size:13px;font-family:'Inter';cursor:pointer;text-align:center;}
   .flow-btn.active-none{background:var(--surface-2);border-color:var(--text-muted);}
   .flow-btn.active-light{background:rgba(214,107,146,.35);border-color:var(--rose);}
   .flow-btn.active-medium{background:rgba(214,107,146,.65);border-color:var(--rose);}
   .flow-btn.active-heavy{background:var(--rose);border-color:var(--rose);color:#1a0e14;font-weight:600;}
+  .pain-btn.active{background:var(--rose);border-color:var(--rose);color:#1a0e14;font-weight:600;}
+  .sex-toggle{width:100%;padding:10px;border-radius:12px;border:1px solid var(--border);background:var(--surface-2);color:var(--text);font-size:14px;font-family:'Inter';cursor:pointer;text-align:center;}
+  .sex-toggle.active{background:var(--lavender);border-color:var(--lavender);color:#191527;font-weight:600;}
 
   /* stats */
   .stats-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:16px 18px;margin-bottom:16px;}
@@ -96,17 +122,34 @@
   .legend i{width:9px;height:9px;border-radius:50%;display:inline-block;}
 
   .footer-note{text-align:center;font-size:12px;color:var(--text-muted);padding:8px 20px 0;line-height:1.6;}
+
+  /* settings modal */
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:flex-end;justify-content:center;z-index:50;}
+  .modal-overlay.open{display:flex;}
+  .modal-sheet{background:var(--surface);border:1px solid var(--border);border-radius:22px 22px 0 0;padding:20px 20px 28px;width:100%;max-width:480px;}
+  .modal-title{font-family:'Fraunces',serif;font-size:19px;font-weight:600;margin-bottom:18px;}
+  .settings-group{margin-bottom:18px;}
+  .settings-label{font-size:13px;color:var(--text-muted);margin-bottom:8px;}
+  .option-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .option-btn{padding:12px;border-radius:12px;border:1px solid var(--border);background:var(--surface-2);color:var(--text);font-size:14px;cursor:pointer;text-align:center;}
+  .option-btn.active{border-color:var(--rose);background:rgba(214,107,146,.18);color:var(--rose);font-weight:600;}
+  .modal-close{width:100%;padding:13px;border-radius:12px;border:none;background:var(--rose);color:#1a0e14;font-weight:600;font-size:15px;cursor:pointer;margin-top:6px;}
 </style>
 </head>
 <body>
 <div class="container">
-  <p class="eyebrow" id="todayDate">—</p>
-  <h1 class="app-title">Твой цикл</h1>
+  <div class="header-row">
+    <div>
+      <p class="eyebrow" id="todayDate">—</p>
+      <h1 class="app-title" id="appTitleText">Твой цикл</h1>
+    </div>
+    <button class="icon-btn" id="settingsBtn" aria-label="Настройки">⚙</button>
+  </div>
 
   <div class="ring-wrap">
     <svg viewBox="0 0 200 200" id="ringSvg"></svg>
     <div class="ring-center">
-      <div class="ring-day-label">День цикла</div>
+      <div class="ring-day-label" id="ringDayLabel">День цикла</div>
       <div class="ring-day-num" id="cycleDayNum">—</div>
       <div class="ring-phase" id="phaseLabel">—</div>
     </div>
@@ -114,11 +157,11 @@
 
   <div class="predict-card">
     <div class="predict-row">
-      <span class="predict-label">Следующие месячные</span>
+      <span class="predict-label" id="lblNextPeriod">Следующие месячные</span>
       <span class="predict-value rose" id="nextPeriod">—</span>
     </div>
     <div class="predict-row">
-      <span class="predict-label">Примерное фертильное окно</span>
+      <span class="predict-label" id="lblFertileWindow">Примерное фертильное окно</span>
       <span class="predict-value sage" id="fertileWindow">—</span>
     </div>
   </div>
@@ -132,44 +175,159 @@
     <div class="cal-grid" id="calDow"></div>
     <div class="cal-grid" id="calGrid" style="margin-top:2px;"></div>
     <div class="legend" style="margin-top:12px;">
-      <span><i style="background:var(--rose)"></i>Месячные</span>
-      <span><i style="background:var(--sage)"></i>Фертильное окно</span>
-      <span><i style="background:transparent;box-shadow:inset 0 0 0 1.5px var(--rose-dim)"></i>Прогноз</span>
+      <span><i style="background:var(--rose)"></i><span id="lgPeriod">Месячные</span></span>
+      <span><i style="background:var(--sage)"></i><span id="lgFertile">Фертильное окно</span></span>
+      <span><i style="background:transparent;box-shadow:inset 0 0 0 1.5px var(--rose-dim)"></i><span id="lgPredicted">Прогноз</span></span>
     </div>
   </div>
 
   <div class="log-card">
-    <div class="log-title">Отметить день</div>
     <div class="log-date" id="selectedDateLabel">—</div>
-    <div class="flow-buttons" id="flowButtons">
-      <button class="flow-btn" data-flow="none">Нет</button>
-      <button class="flow-btn" data-flow="light">Слабо</button>
-      <button class="flow-btn" data-flow="medium">Средне</button>
-      <button class="flow-btn" data-flow="heavy">Сильно</button>
+
+    <div class="log-row">
+      <div class="log-row-title" id="lblFlow">Выделения</div>
+      <div class="flow-buttons" id="flowButtons">
+        <button class="flow-btn" data-flow="none" data-i18n="flowNone">Нет</button>
+        <button class="flow-btn" data-flow="light" data-i18n="flowLight">Слабо</button>
+        <button class="flow-btn" data-flow="medium" data-i18n="flowMedium">Средне</button>
+        <button class="flow-btn" data-flow="heavy" data-i18n="flowHeavy">Сильно</button>
+      </div>
+    </div>
+
+    <div class="log-row">
+      <div class="log-row-title" id="lblPain">Боль (1–5)</div>
+      <div class="pain-buttons" id="painButtons">
+        <button class="pain-btn" data-pain="1">1</button>
+        <button class="pain-btn" data-pain="2">2</button>
+        <button class="pain-btn" data-pain="3">3</button>
+        <button class="pain-btn" data-pain="4">4</button>
+        <button class="pain-btn" data-pain="5">5</button>
+      </div>
+    </div>
+
+    <div class="log-row">
+      <button class="sex-toggle" id="sexToggle">Близость</button>
     </div>
   </div>
 
   <div class="stats-card">
-    <div class="stats-title">Статистика</div>
+    <div class="stats-title" id="lblStats">Статистика</div>
     <div class="stats-grid">
       <div class="stat-box">
         <div class="stat-num" id="avgCycleLen">—</div>
-        <div class="stat-lbl">Средний цикл, дней</div>
+        <div class="stat-lbl" id="lblAvgCycle">Средний цикл, дней</div>
       </div>
       <div class="stat-box">
         <div class="stat-num" id="avgPeriodLen">—</div>
-        <div class="stat-lbl">Длительность месячных</div>
+        <div class="stat-lbl" id="lblAvgPeriod">Длительность месячных</div>
       </div>
     </div>
     <div class="stat-note" id="statsNote"></div>
   </div>
 
-  <p class="footer-note">Все данные хранятся только на этом устройстве, в этом браузере. Никуда не отправляются.</p>
+  <p class="footer-note" id="footerNote">Все данные хранятся только на этом устройстве, в этом браузере. Никуда не отправляются.</p>
+</div>
+
+<div class="modal-overlay" id="settingsOverlay">
+  <div class="modal-sheet">
+    <div class="modal-title" id="settingsTitle">Настройки</div>
+    <div class="settings-group">
+      <div class="settings-label" id="settingsThemeLabel">Тема оформления</div>
+      <div class="option-row" id="themeOptions">
+        <button class="option-btn" data-theme="original">Исходная</button>
+        <button class="option-btn" data-theme="amoled">AMOLED</button>
+      </div>
+    </div>
+    <div class="settings-group">
+      <div class="settings-label" id="settingsLangLabel">Язык</div>
+      <div class="option-row" id="langOptions">
+        <button class="option-btn" data-lang="ru">Русский</button>
+        <button class="option-btn" data-lang="en">English</button>
+      </div>
+    </div>
+    <button class="modal-close" id="settingsClose">Готово</button>
+  </div>
 </div>
 
 <script>
 (function(){
   "use strict";
+
+  // ---------- i18n ----------
+  var STRINGS = {
+    ru: {
+      appTitle: "Твой цикл",
+      ringDayLabel: "День цикла",
+      ringPlaceholder: "Отметь первый день, чтобы начать",
+      nextPeriod: "Следующие месячные",
+      fertileWindow: "Примерное фертильное окно",
+      noData: "нет данных",
+      today: "сегодня",
+      tomorrow: "завтра",
+      inDays: function(n){ return "через "+n+" дн."; },
+      legendPeriod: "Месячные",
+      legendFertile: "Фертильное окно",
+      legendPredicted: "Прогноз",
+      flowLabel: "Выделения",
+      flowNone: "Нет", flowLight: "Слабо", flowMedium: "Средне", flowHeavy: "Сильно",
+      painLabel: "Боль (1–5)",
+      sexLabel: "Близость",
+      statsTitle: "Статистика",
+      avgCycleLbl: "Средний цикл, дней",
+      avgPeriodLbl: "Длительность месячных",
+      statsNoteDefault: "* Пока используются средние значения по умолчанию. Точность прогноза вырастет после 2-3 отмеченных циклов.",
+      statsNoteCalc: function(n){ return "Рассчитано по последним "+n+" циклам."; },
+      footerNote: "Все данные хранятся только на этом устройстве, в этом браузере. Никуда не отправляются.",
+      settingsTitle: "Настройки",
+      themeLabel: "Тема оформления",
+      themeOriginal: "Исходная",
+      themeAmoled: "AMOLED",
+      langLabel: "Язык",
+      closeBtn: "Готово",
+      phaseMenstrual: "Менструация",
+      phaseFollicular: "Фолликулярная фаза",
+      phaseFertile: "Фертильное окно",
+      phaseLuteal: "Лютеиновая фаза",
+      months: ["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"],
+      dow: ["Пн","Вт","Ср","Чт","Пт","Сб","Вс"]
+    },
+    en: {
+      appTitle: "Your cycle",
+      ringDayLabel: "Cycle day",
+      ringPlaceholder: "Log your first day to get started",
+      nextPeriod: "Next period",
+      fertileWindow: "Estimated fertile window",
+      noData: "no data yet",
+      today: "today",
+      tomorrow: "tomorrow",
+      inDays: function(n){ return "in "+n+" day"+(n===1?"":"s"); },
+      legendPeriod: "Period",
+      legendFertile: "Fertile window",
+      legendPredicted: "Predicted",
+      flowLabel: "Flow",
+      flowNone: "None", flowLight: "Light", flowMedium: "Medium", flowHeavy: "Heavy",
+      painLabel: "Pain (1–5)",
+      sexLabel: "Intimacy",
+      statsTitle: "Stats",
+      avgCycleLbl: "Average cycle, days",
+      avgPeriodLbl: "Period length",
+      statsNoteDefault: "* Using default averages for now. Predictions get more accurate after 2-3 logged cycles.",
+      statsNoteCalc: function(n){ return "Calculated from the last "+n+" cycles."; },
+      footerNote: "All data stays on this device, in this browser only. Nothing is sent anywhere.",
+      settingsTitle: "Settings",
+      themeLabel: "Theme",
+      themeOriginal: "Original",
+      themeAmoled: "AMOLED",
+      langLabel: "Language",
+      closeBtn: "Done",
+      phaseMenstrual: "Menstrual",
+      phaseFollicular: "Follicular phase",
+      phaseFertile: "Fertile window",
+      phaseLuteal: "Luteal phase",
+      months: ["January","February","March","April","May","June","July","August","September","October","November","December"],
+      dow: ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]
+    }
+  };
 
   // ---------- storage layer (falls back to memory if localStorage unavailable) ----------
   var memStore = {};
@@ -187,16 +345,46 @@
     else { memStore[key] = val; }
   }
 
-  var DATA_KEY = "cycleTrackerData_v1";
+  var DATA_KEY = "cycleTrackerData_v2";
+  var SETTINGS_KEY = "cycleTrackerSettings_v1";
+  var OLD_DATA_KEY = "cycleTrackerData_v1";
+
   function loadData(){
     var raw = storageGet(DATA_KEY);
-    if(!raw) return { entries: {} };
-    try { return JSON.parse(raw); } catch(e){ return { entries: {} }; }
+    if(raw){
+      try { return JSON.parse(raw); } catch(e){ return { entries: {} }; }
+    }
+    // migrate from v1 (plain string flow values) if present
+    var oldRaw = storageGet(OLD_DATA_KEY);
+    if(oldRaw){
+      try {
+        var old = JSON.parse(oldRaw);
+        var migrated = { entries: {} };
+        Object.keys(old.entries || {}).forEach(function(k){
+          migrated.entries[k] = { flow: old.entries[k] };
+        });
+        return migrated;
+      } catch(e){ /* fall through */ }
+    }
+    return { entries: {} };
   }
   function saveData(data){
     storageSet(DATA_KEY, JSON.stringify(data));
   }
   var data = loadData();
+
+  function loadSettings(){
+    var raw = storageGet(SETTINGS_KEY);
+    if(!raw) return { theme: "original", lang: "ru" };
+    try {
+      var s = JSON.parse(raw);
+      return { theme: s.theme || "original", lang: s.lang || "ru" };
+    } catch(e){ return { theme: "original", lang: "ru" }; }
+  }
+  function saveSettings(s){ storageSet(SETTINGS_KEY, JSON.stringify(s)); }
+  var settings = loadSettings();
+
+  function T(){ return STRINGS[settings.lang] || STRINGS.ru; }
 
   // ---------- date helpers (all in local time, keyed as YYYY-MM-DD) ----------
   function fmtKey(d){
@@ -207,20 +395,21 @@
   function daysBetween(a,b){ return Math.round((b - a)/(1000*60*60*24)); }
   function startOfDay(d){ var r=new Date(d); r.setHours(0,0,0,0); return r; }
 
-  var MONTHS = ["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"];
-  var DOW = ["Пн","Вт","Ср","Чт","Пт","Сб","Вс"];
-
   function fmtLong(d){
-    return d.getDate()+" "+MONTHS[d.getMonth()].toLowerCase()+" "+d.getFullYear();
+    var t = T();
+    return d.getDate()+" "+t.months[d.getMonth()].toLowerCase()+" "+d.getFullYear();
   }
   function fmtShort(d){
-    return d.getDate()+" "+MONTHS[d.getMonth()].toLowerCase();
+    var t = T();
+    return d.getDate()+" "+t.months[d.getMonth()].toLowerCase();
   }
 
   // ---------- derive period instances from logged entries ----------
-  // returns array of {start: Date, end: Date, length: n} sorted ascending
   function getPeriods(){
-    var days = Object.keys(data.entries).filter(function(k){ return data.entries[k] && data.entries[k] !== "none"; }).sort();
+    var days = Object.keys(data.entries).filter(function(k){
+      var e = data.entries[k];
+      return e && e.flow && e.flow !== "none";
+    }).sort();
     var periods = [];
     var current = null;
     var prevDate = null;
@@ -250,7 +439,6 @@
     for(var i=1;i<periods.length;i++){
       cycleLengths.push(daysBetween(periods[i-1].start, periods[i].start));
     }
-    // use up to last 6 cycles for a responsive-but-stable average
     var recentCycles = cycleLengths.slice(-6);
     var avgCycle = average(recentCycles) || 28;
     var periodLengths = periods.map(function(p){ return p.length; });
@@ -275,8 +463,6 @@
     var lastStart = stats.periods[stats.periods.length-1].start;
     var cycleLen = stats.avgCycle;
     var nextStart = addDays(lastStart, Math.round(cycleLen));
-    // if next predicted start is already in the past (user hasn't logged this cycle's period yet),
-    // keep projecting forward so the prediction stays useful
     var today = startOfDay(new Date());
     while(daysBetween(today, nextStart) < 0){
       nextStart = addDays(nextStart, Math.round(cycleLen));
@@ -287,13 +473,10 @@
     return { stats: stats, nextStart: nextStart, ovulation: ovulation, fertileStart: fertileStart, fertileEnd: fertileEnd, lastStart: lastStart };
   }
 
-  // ---------- ring rendering ----------
-  var phaseColors = {
-    menstrual: "#D66B92",
-    follicular: "#8C7FBE",
-    fertile: "#7FA69C",
-    luteal: "#372F4D"
-  };
+  // ---------- theme-aware color lookup ----------
+  function cssVar(name){
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  }
 
   function polar(cx,cy,r,angleDeg){
     var a = (angleDeg) * Math.PI/180;
@@ -313,18 +496,20 @@
     var cycleLen = pred.stats.avgCycle || 28;
     var periodLen = pred.stats.avgPeriod || 5;
 
+    var rose = cssVar("--rose"), lavender = cssVar("--lavender"), sage = cssVar("--sage"), deep = cssVar("--deep"), bg = cssVar("--bg"), text = cssVar("--text");
+
     var segments = [];
     if(pred.nextStart){
-      var ovulationDayIdx = cycleLen - 14; // day index (0-based) of ovulation within cycle
+      var ovulationDayIdx = cycleLen - 14;
       var fertileStartIdx = ovulationDayIdx - 5;
       var fertileEndIdx = ovulationDayIdx + 1;
 
-      segments.push({from:0, to:periodLen, color:phaseColors.menstrual});
-      segments.push({from:periodLen, to:Math.max(periodLen,fertileStartIdx), color:phaseColors.follicular});
-      segments.push({from:Math.max(periodLen,fertileStartIdx), to:fertileEndIdx, color:phaseColors.fertile});
-      segments.push({from:fertileEndIdx, to:cycleLen, color:phaseColors.luteal});
+      segments.push({from:0, to:periodLen, color:rose});
+      segments.push({from:periodLen, to:Math.max(periodLen,fertileStartIdx), color:lavender});
+      segments.push({from:Math.max(periodLen,fertileStartIdx), to:fertileEndIdx, color:sage});
+      segments.push({from:fertileEndIdx, to:cycleLen, color:deep});
     } else {
-      segments.push({from:0, to:cycleLen, color:"#2E2740"});
+      segments.push({from:0, to:cycleLen, color:cssVar("--border")});
     }
 
     var svgContent = "";
@@ -334,29 +519,28 @@
       var endDeg = (seg.to/cycleLen)*360;
       svgContent += '<path d="'+arcPath(cx,cy,r,startDeg,endDeg)+'" fill="'+seg.color+'" />';
     });
-    // inner hole to make it a ring
-    svgContent += '<circle cx="'+cx+'" cy="'+cy+'" r="66" fill="#151220" />';
+    svgContent += '<circle cx="'+cx+'" cy="'+cy+'" r="66" fill="'+bg+'" />';
 
-    // today marker
     if(pred.nextStart){
       var today = startOfDay(new Date());
       var cycleDay = ((cycleLen - daysBetween(today, pred.nextStart)) % cycleLen + cycleLen) % cycleLen;
       var markerDeg = (cycleDay/cycleLen)*360;
       var mp = polar(cx,cy,79,markerDeg);
-      svgContent += '<circle cx="'+mp[0]+'" cy="'+mp[1]+'" r="6" fill="#F2EDF7" stroke="#151220" stroke-width="2" />';
+      svgContent += '<circle cx="'+mp[0]+'" cy="'+mp[1]+'" r="6" fill="'+text+'" stroke="'+bg+'" stroke-width="2" />';
     }
 
     svg.innerHTML = svgContent;
   }
 
   function renderCenterInfo(pred){
+    var t = T();
     var today = startOfDay(new Date());
     var dayNumEl = document.getElementById("cycleDayNum");
     var phaseEl = document.getElementById("phaseLabel");
 
     if(!pred.nextStart){
       dayNumEl.textContent = "—";
-      phaseEl.textContent = "Отметь первый день, чтобы начать";
+      phaseEl.textContent = t.ringPlaceholder;
       return;
     }
     var cycleLen = pred.stats.avgCycle;
@@ -368,36 +552,38 @@
     var fertileStartIdx = ovulationIdx - 5;
     var fertileEndIdx = ovulationIdx + 1;
     var phase;
-    if(cycleDay <= periodLen) phase = "Менструация";
-    else if(cycleDay <= fertileStartIdx) phase = "Фолликулярная фаза";
-    else if(cycleDay <= fertileEndIdx) phase = "Фертильное окно";
-    else phase = "Лютеиновая фаза";
+    if(cycleDay <= periodLen) phase = t.phaseMenstrual;
+    else if(cycleDay <= fertileStartIdx) phase = t.phaseFollicular;
+    else if(cycleDay <= fertileEndIdx) phase = t.phaseFertile;
+    else phase = t.phaseLuteal;
     phaseEl.textContent = phase;
   }
 
   function renderPredictionCard(pred){
+    var t = T();
     var nextEl = document.getElementById("nextPeriod");
     var fertEl = document.getElementById("fertileWindow");
     if(!pred.nextStart){
-      nextEl.textContent = "нет данных";
-      fertEl.textContent = "нет данных";
+      nextEl.textContent = t.noData;
+      fertEl.textContent = t.noData;
       return;
     }
     var today = startOfDay(new Date());
     var daysUntil = daysBetween(today, pred.nextStart);
-    var untilLabel = daysUntil === 0 ? "сегодня" : daysUntil === 1 ? "завтра" : "через "+daysUntil+" дн.";
+    var untilLabel = daysUntil === 0 ? t.today : daysUntil === 1 ? t.tomorrow : t.inDays(daysUntil);
     nextEl.textContent = untilLabel+" · "+fmtShort(pred.nextStart);
     fertEl.textContent = fmtShort(pred.fertileStart)+" – "+fmtShort(pred.fertileEnd);
   }
 
   function renderStats(pred){
+    var t = T();
     document.getElementById("avgCycleLen").textContent = pred.stats.hasEnoughForCycle ? pred.stats.avgCycle : "28*";
     document.getElementById("avgPeriodLen").textContent = pred.stats.hasAnyPeriod ? pred.stats.avgPeriod : "5*";
     var note = document.getElementById("statsNote");
     if(!pred.stats.hasEnoughForCycle){
-      note.textContent = "* Пока используются средние значения по умолчанию. Точность прогноза вырастет после 2-3 отмеченных циклов.";
+      note.textContent = t.statsNoteDefault;
     } else {
-      note.textContent = "Рассчитано по последним "+Math.min(pred.stats.cycleCount,6)+" циклам.";
+      note.textContent = t.statsNoteCalc(Math.min(pred.stats.cycleCount,6));
     }
   }
 
@@ -408,16 +594,17 @@
 
   function buildDowRow(){
     var el = document.getElementById("calDow");
-    el.innerHTML = DOW.map(function(d){ return '<div class="cal-dow">'+d+'</div>'; }).join("");
+    el.innerHTML = T().dow.map(function(d){ return '<div class="cal-dow">'+d+'</div>'; }).join("");
   }
 
   function renderCalendar(pred){
+    var t = T();
     var grid = document.getElementById("calGrid");
     var label = document.getElementById("calMonthLabel");
-    label.textContent = MONTHS[viewDate.getMonth()]+" "+viewDate.getFullYear();
+    label.textContent = t.months[viewDate.getMonth()]+" "+viewDate.getFullYear();
 
     var firstDay = new Date(viewDate.getFullYear(), viewDate.getMonth(), 1);
-    var startOffset = (firstDay.getDay()+6) % 7; // make Monday=0
+    var startOffset = (firstDay.getDay()+6) % 7;
     var daysInMonth = new Date(viewDate.getFullYear(), viewDate.getMonth()+1, 0).getDate();
 
     var today = startOfDay(new Date());
@@ -428,11 +615,11 @@
       var d = new Date(viewDate.getFullYear(), viewDate.getMonth(), day);
       var key = fmtKey(d);
       var classes = ["cal-day"];
-      var flow = data.entries[key];
+      var entry = data.entries[key];
+      var flow = entry && entry.flow;
       if(flow && flow !== "none") classes.push("flow-"+flow);
       if(daysBetween(today,d) === 0) classes.push("today");
 
-      // predicted period day?
       if(pred.nextStart){
         var pLen = Math.round(pred.stats.avgPeriod);
         for(var pd=0; pd<pLen; pd++){
@@ -444,7 +631,16 @@
           classes.push("fertile");
         }
       }
-      html += '<div class="'+classes.join(" ")+'" data-key="'+key+'">'+day+'</div>';
+
+      var inner = day;
+      if(entry && entry.pain){
+        inner += '<span class="cal-pain-badge">'+entry.pain+'</span>';
+      }
+      if(entry && entry.sex){
+        inner += '<span class="cal-sex-dot"></span>';
+      }
+
+      html += '<div class="'+classes.join(" ")+'" data-key="'+key+'">'+inner+'</div>';
     }
     grid.innerHTML = html;
 
@@ -460,13 +656,35 @@
   function renderLogSection(){
     document.getElementById("selectedDateLabel").textContent = fmtLong(selectedDate);
     var key = fmtKey(selectedDate);
-    var current = data.entries[key] || "none";
-    var buttons = document.querySelectorAll(".flow-btn");
-    buttons.forEach(function(btn){
+    var entry = data.entries[key] || {};
+    var currentFlow = entry.flow || "none";
+
+    var flowButtons = document.querySelectorAll(".flow-btn");
+    flowButtons.forEach(function(btn){
       var f = btn.getAttribute("data-flow");
       btn.classList.remove("active-none","active-light","active-medium","active-heavy");
-      if(f === current) btn.classList.add("active-"+f);
+      if(f === currentFlow) btn.classList.add("active-"+f);
     });
+
+    var painButtons = document.querySelectorAll(".pain-btn");
+    painButtons.forEach(function(btn){
+      var p = parseInt(btn.getAttribute("data-pain"),10);
+      btn.classList.toggle("active", entry.pain === p);
+    });
+
+    var sexBtn = document.getElementById("sexToggle");
+    sexBtn.classList.toggle("active", !!entry.sex);
+  }
+
+  function ensureEntry(key){
+    if(!data.entries[key]) data.entries[key] = {};
+    return data.entries[key];
+  }
+  function cleanupEntry(key){
+    var e = data.entries[key];
+    if(e && !e.flow && !e.pain && !e.sex){
+      delete data.entries[key];
+    }
   }
 
   document.getElementById("flowButtons").addEventListener("click", function(e){
@@ -474,8 +692,42 @@
     if(!btn) return;
     var flow = btn.getAttribute("data-flow");
     var key = fmtKey(selectedDate);
-    if(flow === "none"){ delete data.entries[key]; }
-    else { data.entries[key] = flow; }
+    if(flow === "none"){
+      if(data.entries[key]) delete data.entries[key].flow;
+    } else {
+      ensureEntry(key).flow = flow;
+    }
+    cleanupEntry(key);
+    saveData(data);
+    refreshAll();
+  });
+
+  document.getElementById("painButtons").addEventListener("click", function(e){
+    var btn = e.target.closest(".pain-btn");
+    if(!btn) return;
+    var pain = parseInt(btn.getAttribute("data-pain"),10);
+    var key = fmtKey(selectedDate);
+    var entry = data.entries[key] || {};
+    if(entry.pain === pain){
+      // tapping the same value again clears it
+      if(data.entries[key]) delete data.entries[key].pain;
+    } else {
+      ensureEntry(key).pain = pain;
+    }
+    cleanupEntry(key);
+    saveData(data);
+    refreshAll();
+  });
+
+  document.getElementById("sexToggle").addEventListener("click", function(){
+    var key = fmtKey(selectedDate);
+    var entry = data.entries[key] || {};
+    if(entry.sex){
+      if(data.entries[key]) delete data.entries[key].sex;
+    } else {
+      ensureEntry(key).sex = true;
+    }
+    cleanupEntry(key);
     saveData(data);
     refreshAll();
   });
@@ -489,6 +741,90 @@
     refreshAll();
   });
 
+  // ---------- settings modal ----------
+  var overlay = document.getElementById("settingsOverlay");
+  document.getElementById("settingsBtn").addEventListener("click", function(){
+    overlay.classList.add("open");
+    renderSettingsModal();
+  });
+  document.getElementById("settingsClose").addEventListener("click", function(){
+    overlay.classList.remove("open");
+  });
+  overlay.addEventListener("click", function(e){
+    if(e.target === overlay) overlay.classList.remove("open");
+  });
+
+  document.getElementById("themeOptions").addEventListener("click", function(e){
+    var btn = e.target.closest(".option-btn");
+    if(!btn) return;
+    settings.theme = btn.getAttribute("data-theme");
+    saveSettings(settings);
+    applyTheme();
+    renderSettingsModal();
+    refreshAll();
+  });
+  document.getElementById("langOptions").addEventListener("click", function(e){
+    var btn = e.target.closest(".option-btn");
+    if(!btn) return;
+    settings.lang = btn.getAttribute("data-lang");
+    saveSettings(settings);
+    renderSettingsModal();
+    applyStaticStrings();
+    buildDowRow();
+    refreshAll();
+  });
+
+  function renderSettingsModal(){
+    var t = T();
+    document.getElementById("settingsTitle").textContent = t.settingsTitle;
+    document.getElementById("settingsThemeLabel").textContent = t.themeLabel;
+    document.getElementById("settingsLangLabel").textContent = t.langLabel;
+    document.getElementById("settingsClose").textContent = t.closeBtn;
+
+    var themeBtns = document.querySelectorAll("#themeOptions .option-btn");
+    themeBtns.forEach(function(btn){
+      var th = btn.getAttribute("data-theme");
+      btn.textContent = th === "original" ? t.themeOriginal : t.themeAmoled;
+      btn.classList.toggle("active", settings.theme === th);
+    });
+    var langBtns = document.querySelectorAll("#langOptions .option-btn");
+    langBtns.forEach(function(btn){
+      btn.classList.toggle("active", settings.lang === btn.getAttribute("data-lang"));
+    });
+  }
+
+  function applyTheme(){
+    document.documentElement.setAttribute("data-theme", settings.theme);
+    var metaTheme = document.querySelector('meta[name="theme-color"]');
+    if(metaTheme) metaTheme.setAttribute("content", cssVar("--bg") || "#151220");
+  }
+
+  function applyStaticStrings(){
+    var t = T();
+    document.documentElement.lang = settings.lang;
+    document.getElementById("appTitleText").textContent = t.appTitle;
+    document.getElementById("ringDayLabel").textContent = t.ringDayLabel;
+    document.getElementById("lblNextPeriod").textContent = t.nextPeriod;
+    document.getElementById("lblFertileWindow").textContent = t.fertileWindow;
+    document.getElementById("lgPeriod").textContent = t.legendPeriod;
+    document.getElementById("lgFertile").textContent = t.legendFertile;
+    document.getElementById("lgPredicted").textContent = t.legendPredicted;
+    document.getElementById("lblFlow").textContent = t.flowLabel;
+    document.getElementById("lblPain").textContent = t.painLabel;
+    document.getElementById("sexToggle").textContent = t.sexLabel;
+    document.getElementById("lblStats").textContent = t.statsTitle;
+    document.getElementById("lblAvgCycle").textContent = t.avgCycleLbl;
+    document.getElementById("lblAvgPeriod").textContent = t.avgPeriodLbl;
+    document.getElementById("footerNote").textContent = t.footerNote;
+
+    document.querySelector('[data-flow="none"]').textContent = t.flowNone;
+    document.querySelector('[data-flow="light"]').textContent = t.flowLight;
+    document.querySelector('[data-flow="medium"]').textContent = t.flowMedium;
+    document.querySelector('[data-flow="heavy"]').textContent = t.flowHeavy;
+
+    document.getElementById("todayDate").textContent = fmtLong(new Date());
+  }
+
   function refreshAll(){
     var pred = getPredictions();
     renderRing(pred);
@@ -499,7 +835,8 @@
     renderLogSection();
   }
 
-  document.getElementById("todayDate").textContent = fmtLong(new Date());
+  applyTheme();
+  applyStaticStrings();
   buildDowRow();
   refreshAll();
 
